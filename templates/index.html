@@ -1,16 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Song Downloader</title>
-</head>
-<body>
-    <h1>Download Songs from YouTube</h1>
-    <form action="/download" method="post">
-        <label for="url">YouTube URL:</label>
-        <input type="text" id="url" name="url" required>
-        <button type="submit">Download</button>
-    </form>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Download Song</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Download Song</h1>
+      <form action="/download" method="post">
+        <div class="form-group">
+          <label for="url">YouTube URL</label>
+          <input type="text" class="form-control" id="url" name="url" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Download</button>
+      </form>
+    </div>
+  </body>
 </html>
