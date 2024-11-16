@@ -4,20 +4,6 @@ import os
 
 app = Flask(__name__)
 
-def download_song(url, output_path):
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'outtmpl': f'{output_path}/%(title)s.%(ext)s',
-    }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -25,18 +11,23 @@ def index():
 @app.route('/download', methods=['POST'])
 def download():
     url = request.form['url']
-    output_directory = 'downloads'
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'outtmpl': 'downloads/%(title)s.%(ext)s',
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(url, download=True)
+        file_path = ydl.prepare_filename(info_dict).replace('.webm', '.mp3')
     
-    download_song(url, output_directory)
-    
-    # Find the downloaded file
-    for file_name in os.listdir(output_directory):
-        if file_name.endswith('.mp3'):
-            return send_file(os.path.join(output_directory, file_name), as_attachment=True)
-    
-    return 'Download failed', 500
+    return send_file(file_path, as_attachment=True)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+    if not os.path.exists('downloads'):
+        os.makedirs('downloads')
     app.run(debug=True)
+
